@@ -1,0 +1,127 @@
+---
+import { SITE, LINKS } from '../consts';
+const year = new Date().getUTCFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="cols">
+      <div class="about">
+        <div class="name">{SITE.name}<span class="dot">.</span></div>
+        <p class="line">{SITE.tagline}</p>
+        <p class="principles mono">沒有 like · 沒有留言 · 沒有推薦流</p>
+      </div>
+      <div class="link-groups">
+        <div>
+          <span class="eyebrow">Links</span>
+          <div class="links">
+            <a href={LINKS.youtube} target="_blank" rel="noopener" class="ext">YouTube</a>
+            <a href={LINKS.github} target="_blank" rel="noopener" class="ext">GitHub</a>
+            <a href={LINKS.rss} class="rss mono">RSS</a>
+          </div>
+        </div>
+        <div>
+          <span class="eyebrow">Site</span>
+          <div class="links">
+            <a href="/" class="ext">Now</a>
+            <a href="/writing" class="ext">Writing</a>
+            <a href="/projects" class="ext">Projects</a>
+            <a href="/about" class="ext">About</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="meta mono">
+      <span>© {year} {SITE.name} · public brain</span>
+      <span>Astro · Markdown · Obsidian → 只有 publish:true 才發布</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    margin-top: 24px;
+  }
+  .site-footer .wrap {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  .cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: space-between;
+  }
+  .about {
+    flex: 1 1 320px;
+    min-width: 260px;
+  }
+  .name {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--fg);
+  }
+  .dot {
+    color: var(--brand);
+  }
+  .line {
+    font-size: 14px;
+    color: var(--fg-muted);
+    line-height: 1.7;
+    margin: 10px 0 0;
+    max-width: 38ch;
+  }
+  .principles {
+    font-size: 11px;
+    color: var(--fg-muted);
+    margin: 14px 0 0;
+    letter-spacing: 0.02em;
+  }
+  .link-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+  }
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 14px;
+  }
+  .ext {
+    font-size: 14px;
+    color: var(--fg);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .ext:hover {
+    color: var(--brand);
+  }
+  .rss {
+    font-size: 13px;
+    color: var(--brand);
+    text-decoration: none;
+    border: 1px solid var(--brand-border-hover);
+    border-radius: 9999px;
+    padding: 3px 11px;
+    width: fit-content;
+    margin-top: 2px;
+    transition: all 0.2s ease;
+  }
+  .rss:hover {
+    background: var(--brand-tint);
+  }
+  .meta {
+    margin-top: 36px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--fg-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+  }
+</style>

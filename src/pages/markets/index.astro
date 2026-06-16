@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import ArticleListItem from '../../components/ArticleListItem.astro';
+import { getMarketsPosts, toView } from '../../lib/posts';
+
+const posts = (await getMarketsPosts()).map(toView);
+---
+
+<Base
+  title="Markets & Systems"
+  description="交易筆記、策略研究、macro regime、工具開發 — 比較 technical 的部分。"
+>
+  <div class="wrap">
+    <section class="head">
+      <span class="eyebrow">Markets &amp; Systems</span>
+      <h1>交易筆記 · 策略研究</h1>
+      <p class="lede">
+        交易筆記、策略研究、macro regime、工具開發。這一區比較 technical — 把判斷流程寫下來，錯了就回頭校準。
+      </p>
+    </section>
+
+    <section class="list">
+      {
+        posts.length === 0 ? (
+          <p class="empty">這一區還沒有公開的筆記。</p>
+        ) : (
+          posts.map((post) => <ArticleListItem post={post} />)
+        )
+      }
+    </section>
+  </div>
+</Base>
+
+<style>
+  .head {
+    padding: 56px 0 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(32px, 4.5vw, 46px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 10px 0 0;
+    color: var(--fg);
+  }
+  .lede {
+    font-size: 18px;
+    color: var(--fg-muted);
+    line-height: 1.7;
+    margin: 14px 0 0;
+    max-width: 54ch;
+  }
+  .list {
+    padding: 6px 0 64px;
+  }
+  .empty {
+    color: var(--fg-muted);
+    padding: 40px 6px;
+  }
+</style>

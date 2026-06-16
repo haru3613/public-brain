@@ -1,0 +1,212 @@
+---
+import Base from '../layouts/Base.astro';
+import Now from '../components/Now.astro';
+import PostRow from '../components/PostRow.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { SITE } from '../consts';
+import { PROJECTS } from '../data/projects';
+import { getPosts, getMarketsPosts, toView } from '../lib/posts';
+
+const posts = (await getPosts()).map(toView);
+const latest = posts.slice(0, 4);
+const marketsNotes = (await getMarketsPosts()).map(toView).slice(0, 3);
+---
+
+<Base>
+  <div class="wrap">
+    <!-- hero + Now -->
+    <section class="hero">
+      <div class="intro">
+        <div class="eyebrow">Public Brain · 公開腦袋</div>
+        <h1>{SITE.name}<span class="dot">.</span></h1>
+        <p class="role mono">{SITE.role}</p>
+        <p class="lede">
+          這裡是我整理想法的地方 — 交易、系統、AI、創作、生活。先服務自己的表達，再服務讀者。<span
+            class="muted">沒有 like、沒有留言、沒有推薦流。</span
+          >
+        </p>
+        <div class="cta">
+          <a href="/writing" class="btn btn-primary">讀 Writing →</a>
+          <a href="/projects" class="btn btn-ghost">看 Projects</a>
+        </div>
+      </div>
+      <Now />
+    </section>
+
+    <!-- latest writing -->
+    <section class="block">
+      <div class="block-head">
+        <div>
+          <span class="eyebrow">Writing</span>
+          <h2 class="section-head h2">最新文章</h2>
+        </div>
+        <a href="/writing" class="more mono">查看全部 →</a>
+      </div>
+      <div>
+        {latest.map((post) => <PostRow post={post} />)}
+      </div>
+    </section>
+
+    <!-- markets + projects -->
+    <section class="two-col">
+      <div class="col-markets">
+        <span class="eyebrow">Markets &amp; Systems</span>
+        <h3 class="section-head h3">交易筆記 · 策略研究</h3>
+        <div>
+          {
+            marketsNotes.map((note) => (
+              <a href={note.href} class="note-row">
+                <div class="note-body">
+                  <div class="note-title">{note.title}</div>
+                  <div class="note-meta mono">
+                    {note.catLabel}
+                    {note.tags[0] ? ` · ${note.tags[0]}` : ''}
+                  </div>
+                </div>
+                <span class="note-arrow">→</span>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+      <div class="col-projects">
+        <span class="eyebrow">Projects</span>
+        <h3 class="section-head h3">正在維護的東西</h3>
+        <div class="proj-grid">
+          {PROJECTS.map((p) => <ProjectCard project={p} />)}
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  /* hero */
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 44px;
+    align-items: flex-start;
+    padding: 64px 0 46px;
+    border-bottom: 1px solid var(--border);
+  }
+  .intro {
+    flex: 1 1 440px;
+    min-width: 300px;
+  }
+  h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(42px, 6vw, 62px);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 16px 0 0;
+    color: var(--fg);
+  }
+  .dot {
+    color: var(--brand);
+  }
+  .role {
+    font-size: 13px;
+    color: var(--fg-muted);
+    margin: 16px 0 0;
+    letter-spacing: 0.01em;
+  }
+  .lede {
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--fg);
+    margin: 22px 0 0;
+    max-width: 46ch;
+  }
+  .lede .muted {
+    color: var(--fg-muted);
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  /* latest writing */
+  .block {
+    padding: 46px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .block-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .h2 {
+    font-size: 24px;
+  }
+  .more {
+    font-size: 13px;
+    color: var(--brand);
+    text-decoration: none;
+    padding: 6px 0;
+  }
+  .more:hover {
+    color: var(--brand-hover);
+  }
+
+  /* markets + projects */
+  .two-col {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 44px;
+    padding: 46px 0 64px;
+  }
+  .col-markets {
+    flex: 1 1 320px;
+    min-width: 280px;
+  }
+  .col-projects {
+    flex: 1 1 360px;
+    min-width: 280px;
+  }
+  .h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  .note-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-top: 1px solid var(--border);
+    padding: 14px 4px;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+  .note-row:hover {
+    background: rgba(255, 255, 255, 0.025);
+  }
+  .note-body {
+    min-width: 0;
+  }
+  .note-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fg);
+  }
+  .note-meta {
+    font-size: 11px;
+    color: var(--fg-muted);
+    margin-top: 3px;
+  }
+  .note-arrow {
+    color: var(--fg-muted);
+    flex: none;
+  }
+  .proj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+</style>

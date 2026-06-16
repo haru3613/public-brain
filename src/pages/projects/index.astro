@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { PROJECTS } from '../../data/projects';
+---
+
+<Base title="Projects" description="CardDex、OpenClaw workflows、影片系列、side projects — 正在維護的東西。">
+  <div class="wrap">
+    <section class="head">
+      <span class="eyebrow">Projects</span>
+      <h1>在做的東西</h1>
+      <p class="lede">
+        長期維護的產品、工作流與創作。網站是它們文字版的家 — 多半的想法都從這裡長出來，再回到這裡被記下。
+      </p>
+    </section>
+
+    <section class="grid-wrap">
+      <div class="grid">
+        {PROJECTS.map((p) => <ProjectCard project={p} large />)}
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .head {
+    padding: 56px 0 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(32px, 4.5vw, 46px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 10px 0 0;
+    color: var(--fg);
+  }
+  .lede {
+    font-size: 18px;
+    color: var(--fg-muted);
+    line-height: 1.7;
+    margin: 14px 0 0;
+    max-width: 54ch;
+  }
+  .grid-wrap {
+    padding: 32px 0 64px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+    gap: 16px;
+  }
+</style>

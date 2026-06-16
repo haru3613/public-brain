@@ -1,0 +1,148 @@
+/* ==========================================================================
+   Design tokens — ported from the CardDex foundations used in the design file.
+   Accent is champagne gold (#e5da94); the prototype's hard-coded teal glows /
+   borders are re-parameterized here as --brand-* so the theme stays coherent.
+   ========================================================================== */
+:root {
+  /* accent ramp (gold) */
+  --brand: #e5da94;
+  --brand-hover: #d8ca77;
+  --brand-foreground: #1a1604;
+  --brand-light: #f5efd0;
+  --brand-glow-strong: rgba(229, 218, 148, 0.18);
+  --brand-glow: rgba(229, 218, 148, 0.12);
+  --brand-glow-soft: rgba(229, 218, 148, 0.1);
+  --brand-border-hover: rgba(229, 218, 148, 0.4);
+  --brand-border-hover-soft: rgba(229, 218, 148, 0.3);
+  --brand-tint: rgba(229, 218, 148, 0.1);
+
+  /* surfaces + text */
+  --bg: #0d1117;
+  --bg-elevated: #151c26;
+  --fg: #dce3ea;
+  --fg-muted: #858e9c;
+  --border: #2c333e;
+
+  /* status + category colours */
+  --info: #3b82f6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --grade-sr: #c0c7d1;
+  --grade-ur: #d4af37;
+  --grade-ssr: #b57bff;
+  --psa-red: #d7263d;
+
+  /* type */
+  --font-heading: 'Space Grotesk', 'Noto Sans TC', system-ui, sans-serif;
+  --font-body: 'DM Sans', 'Noto Sans TC', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* layout */
+  --maxw: 1080px;
+  --maxw-read: 720px;
+}
+
+* {
+  box-sizing: border-box;
+}
+html {
+  color-scheme: dark;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 24px;
+}
+::selection {
+  background: rgba(229, 218, 148, 0.25);
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- shared primitives ---- */
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.eyebrow {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* primary / ghost buttons (used as <a> links across the site) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 12px;
+  padding: 12px 20px;
+  min-height: 44px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.btn-primary {
+  background: var(--brand);
+  color: var(--brand-foreground);
+  border: none;
+}
+.btn-primary:hover {
+  background: var(--brand-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px var(--brand-glow-strong);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  border-color: var(--brand-border-hover);
+  color: var(--brand);
+}
+
+/* section eyebrow + heading pairing */
+.section-head {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--fg);
+  margin: 6px 0 0;
+}
+
+a {
+  color: var(--brand);
+}

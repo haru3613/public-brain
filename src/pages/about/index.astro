@@ -1,0 +1,129 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE, LINKS } from '../../consts';
+---
+
+<Base title="About" description="很短的自介與連結。網站是家，社群只是路邊看板。">
+  <div class="wrap about">
+    <section class="head">
+      <span class="eyebrow">About</span>
+      <h1>{SITE.name}<span class="dot">.</span></h1>
+      <p class="role mono">{SITE.role}</p>
+    </section>
+
+    <section class="bio">
+      <p>
+        我在交易系統、AI 工具與創作之間來回。這個網站是我整理想法的地方 — 把寫作與發布從滑 feed 裡拆出來。
+      </p>
+      <p>
+        這裡先服務我自己的整理與表達，再服務讀者。所以沒有 like、沒有留言、沒有推薦流，也沒有社交數字的壓力。
+      </p>
+      <blockquote>{SITE.tagline}</blockquote>
+      <p class="muted">
+        文章從 Obsidian 長出來，只有標記 <code>publish: true</code> 的才會發布到這裡。其餘的，留在私人筆記裡。
+      </p>
+    </section>
+
+    <section class="links">
+      <span class="eyebrow">Links</span>
+      <div class="link-list">
+        <a href={LINKS.youtube} target="_blank" rel="noopener">YouTube<span class="arrow">→</span></a>
+        <a href={LINKS.github} target="_blank" rel="noopener">GitHub<span class="arrow">→</span></a>
+        <a href={LINKS.rss}>RSS<span class="arrow">→</span></a>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .about {
+    max-width: var(--maxw-read);
+  }
+  .head {
+    padding: 56px 0 26px;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(34px, 5vw, 50px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin: 10px 0 0;
+    color: var(--fg);
+  }
+  .dot {
+    color: var(--brand);
+  }
+  .role {
+    font-size: 13px;
+    color: var(--fg-muted);
+    margin: 14px 0 0;
+    letter-spacing: 0.01em;
+  }
+  .bio {
+    padding: 30px 0 8px;
+  }
+  .bio p {
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--fg);
+    margin: 0 0 20px;
+  }
+  .bio .muted {
+    color: var(--fg-muted);
+    font-size: 16px;
+  }
+  .bio code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--brand);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1px 6px;
+  }
+  blockquote {
+    margin: 28px 0;
+    padding: 6px 0 6px 22px;
+    border-left: 3px solid var(--brand);
+    font-family: var(--font-heading);
+    font-size: 23px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--fg);
+  }
+  .links {
+    padding: 24px 0 64px;
+    border-top: 1px solid var(--border);
+  }
+  .link-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+  }
+  .link-list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--fg);
+    text-decoration: none;
+    padding: 16px 4px;
+    border-top: 1px solid var(--border);
+    transition: color 0.2s ease;
+  }
+  .link-list a:first-child {
+    border-top: none;
+  }
+  .link-list a:hover {
+    color: var(--brand);
+  }
+  .arrow {
+    color: var(--fg-muted);
+  }
+  .link-list a:hover .arrow {
+    color: var(--brand);
+  }
+</style>

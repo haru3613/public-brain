@@ -1,0 +1,127 @@
+---
+import Base from '../../layouts/Base.astro';
+import ArticleListItem from '../../components/ArticleListItem.astro';
+import { FILTER_TABS } from '../../lib/categories';
+import { getPosts, toView } from '../../lib/posts';
+
+const posts = (await getPosts()).map(toView);
+---
+
+<Base
+  title="Writing"
+  description="長文、樹洞、生活觀察、想法紀錄。預設時間序，少量精選。寫給自己，也留給願意讀的人。"
+>
+  <div class="wrap">
+    <section class="head">
+      <span class="eyebrow">Writing</span>
+      <h1>文章</h1>
+      <p class="lede">
+        長文、樹洞、生活觀察、想法紀錄。預設時間序，少量精選。寫給自己，也留給願意讀的人。
+      </p>
+      <div class="tabs" id="filter-tabs">
+        {
+          FILTER_TABS.map((tab) => (
+            <button
+              type="button"
+              class:list={['tab', { active: tab.key === 'all' }]}
+              data-key={tab.key}
+            >
+              {tab.label}
+            </button>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="list" id="writing-list">
+      {
+        posts.length === 0 && (
+          <p class="empty">還沒有公開的文章。把 Obsidian 筆記標上 <code>publish: true</code> 就會出現在這裡。</p>
+        )
+      }
+      {posts.map((post) => <ArticleListItem post={post} />)}
+    </section>
+  </div>
+</Base>
+
+<script>
+  const tabs = document.getElementById('filter-tabs');
+  const items = Array.from(
+    document.querySelectorAll<HTMLElement>('#writing-list .item')
+  );
+
+  tabs?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.tab');
+    if (!btn) return;
+    const key = btn.dataset.key;
+
+    tabs.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t === btn));
+    items.forEach((item) => {
+      const show = key === 'all' || item.dataset.category === key;
+      item.style.display = show ? '' : 'none';
+    });
+  });
+</script>
+
+<style>
+  .head {
+    padding: 56px 0 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(32px, 4.5vw, 46px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 10px 0 0;
+    color: var(--fg);
+  }
+  .lede {
+    font-size: 18px;
+    color: var(--fg-muted);
+    line-height: 1.7;
+    margin: 14px 0 0;
+    max-width: 54ch;
+  }
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 26px;
+  }
+  .tab {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--fg-muted);
+    border-radius: 9999px;
+    padding: 7px 15px;
+    min-height: 36px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tab:hover {
+    border-color: var(--brand-border-hover);
+    color: var(--brand);
+  }
+  .tab.active {
+    background: var(--brand);
+    color: var(--brand-foreground);
+    border-color: var(--brand);
+  }
+
+  .list {
+    padding: 6px 0 64px;
+  }
+  .empty {
+    color: var(--fg-muted);
+    padding: 40px 6px;
+  }
+  .empty code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--brand);
+  }
+</style>

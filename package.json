@@ -1,0 +1,29 @@
+{
+  "name": "public-brain",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Harvey 的公開腦袋 — 交易、系統、AI、創作、生活觀察。網站是家，社群只是路邊看板。",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "sync": "node scripts/sync-obsidian.mjs",
+    "sync:apply": "node scripts/sync-obsidian.mjs --apply"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.0.0",
+    "@astrojs/rss": "^4.0.0",
+    "@astrojs/sitemap": "^3.2.0",
+    "astro": "^5.1.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "typescript": "^5.9.3"
+  }
+}

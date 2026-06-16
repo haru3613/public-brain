@@ -1,0 +1,225 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../consts';
+import { getPosts, toView } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const view = toView(post);
+const { Content } = await render(post);
+---
+
+<Base title={post.data.title} description={post.data.summary}>
+  <article class="article">
+    <a href="/writing" class="back mono">← Writing</a>
+
+    <header class="head">
+      <span class="cat" style={`color:${view.catColor};`}>{view.catLabel}</span>
+      <h1>{post.data.title}</h1>
+      <div class="meta mono">
+        <span>{view.dateMono}</span><span>·</span><span>{view.readTime}</span>
+        {post.data.tags.map((tag) => <span class="tag">#{tag}</span>)}
+        {view.isDraft && <span class="draft">DRAFT</span>}
+      </div>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <footer class="foot">
+      <a href="/writing" class="btn btn-ghost back-btn">← 回到 Writing</a>
+      <span class="sig mono">{SITE.name} · public brain</span>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .article {
+    max-width: var(--maxw-read);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .back {
+    display: inline-block;
+    font-size: 13px;
+    color: var(--fg-muted);
+    text-decoration: none;
+    margin-top: 40px;
+    transition: color 0.2s ease;
+  }
+  .back:hover {
+    color: var(--brand);
+  }
+  .head {
+    margin-top: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cat {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(30px, 4.6vw, 42px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 14px 0 0;
+    color: var(--fg);
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--fg-muted);
+  }
+  .tag,
+  .draft {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    padding: 2px 9px;
+  }
+  .draft {
+    color: var(--warning);
+    border-color: var(--warning);
+  }
+
+  .prose {
+    margin-top: 34px;
+  }
+  .foot {
+    margin-top: 48px;
+    padding: 24px 0 64px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .back-btn {
+    font-size: 14px;
+    padding: 11px 18px;
+  }
+  .sig {
+    font-size: 12px;
+    color: var(--fg-muted);
+  }
+
+  /* ---- prose typography (matches the design's article blocks) ---- */
+  .prose :global(p) {
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--fg);
+    margin: 0 0 22px;
+  }
+  /* section heading (design `h` block) */
+  .prose :global(h1),
+  .prose :global(h2),
+  .prose :global(h3) {
+    font-family: var(--font-heading);
+    font-size: 23px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 40px 0 16px;
+    color: var(--fg);
+    line-height: 1.35;
+  }
+  /* bold sub-lead (design `sub` block) */
+  .prose :global(h4) {
+    font-family: var(--font-body);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--fg);
+    margin: 26px 0 6px;
+    line-height: 1.6;
+  }
+  /* pull-quote (design `q` block) */
+  .prose :global(blockquote) {
+    margin: 30px 0;
+    padding: 6px 0 6px 22px;
+    border-left: 3px solid var(--brand);
+    font-family: var(--font-heading);
+    font-size: 23px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--fg);
+  }
+  .prose :global(blockquote p) {
+    font-family: var(--font-heading);
+    font-size: 23px;
+    font-weight: 500;
+    line-height: 1.45;
+    margin: 0;
+  }
+  .prose :global(a) {
+    color: var(--brand);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prose :global(strong) {
+    color: var(--fg);
+    font-weight: 700;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--fg);
+    margin: 0 0 22px;
+    padding-left: 1.4em;
+  }
+  .prose :global(li) {
+    margin: 6px 0;
+  }
+  .prose :global(li::marker) {
+    color: var(--brand);
+  }
+  .prose :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 36px 0;
+  }
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1px 6px;
+  }
+  .prose :global(pre) {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    overflow-x: auto;
+    margin: 0 0 22px;
+  }
+  .prose :global(pre code) {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+  .prose :global(img) {
+    max-width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+</style>

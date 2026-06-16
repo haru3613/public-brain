@@ -1,0 +1,85 @@
+---
+import type { Project } from '../data/projects';
+interface Props {
+  project: Project;
+  large?: boolean;
+}
+const { project, large = false } = Astro.props;
+---
+
+<div class:list={['proj', { large }]}>
+  <div class="top">
+    <span class="name">{project.name}</span>
+    <span class="status mono" style={`color:${project.color};border-color:${project.color};`}>
+      {project.status}
+    </span>
+  </div>
+  <div class="kind mono">{project.kind}</div>
+  <p class="desc">{project.desc}</p>
+</div>
+
+<style>
+  .proj {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    transition: all 0.2s ease;
+  }
+  .proj.large {
+    padding: 22px;
+  }
+  .proj:hover {
+    border-color: var(--brand-border-hover-soft);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--brand-glow-soft);
+  }
+  .proj.large:hover {
+    box-shadow: 0 8px 24px var(--brand-glow);
+  }
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .name {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--fg);
+  }
+  .large .name {
+    font-size: 18px;
+  }
+  .status {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    border: 1px solid;
+    border-radius: 9999px;
+    padding: 2px 7px;
+  }
+  .large .status {
+    padding: 2px 8px;
+  }
+  .kind {
+    font-size: 11px;
+    color: var(--fg-muted);
+    margin-top: 6px;
+  }
+  .large .kind {
+    margin-top: 7px;
+  }
+  .desc {
+    font-size: 13px;
+    color: var(--fg-muted);
+    line-height: 1.6;
+    margin: 9px 0 0;
+  }
+  .large .desc {
+    font-size: 14px;
+    line-height: 1.65;
+    margin-top: 12px;
+  }
+</style>

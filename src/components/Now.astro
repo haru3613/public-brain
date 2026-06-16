@@ -1,0 +1,87 @@
+---
+import { NOW, NOW_UPDATED } from '../data/now';
+---
+
+<aside class="now-card">
+  <div class="head">
+    <span class="eyebrow">Now</span>
+    <span class="mono updated">{NOW_UPDATED}</span>
+  </div>
+  <p class="subtitle">目前在做的事。</p>
+  <div>
+    {
+      NOW.map((item) => (
+        <div class="row">
+          <span class="dot" style={`background:${item.color};box-shadow:0 0 8px ${item.color};`} />
+          <div class="body">
+            <div class="name">{item.name}</div>
+            <div class="desc">{item.desc}</div>
+          </div>
+          <span class="status mono" style={`color:${item.color};`}>
+            {item.status}
+          </span>
+        </div>
+      ))
+    }
+  </div>
+</aside>
+
+<style>
+  .now-card {
+    flex: 1 1 300px;
+    min-width: 280px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .updated {
+    font-size: 11px;
+    color: var(--fg-muted);
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--fg-muted);
+    margin: 8px 0 14px;
+  }
+  .row {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 13px 0;
+    border-top: 1px solid var(--border);
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    margin-top: 6px;
+    flex: none;
+  }
+  .body {
+    flex: 1;
+    min-width: 0;
+  }
+  .name {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--fg);
+  }
+  .desc {
+    font-size: 13px;
+    color: var(--fg-muted);
+    line-height: 1.5;
+    margin-top: 1px;
+  }
+  .status {
+    font-size: 11px;
+    flex: none;
+    margin-top: 2px;
+  }
+</style>

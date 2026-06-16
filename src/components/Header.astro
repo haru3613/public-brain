@@ -1,0 +1,108 @@
+---
+import { SITE, NAV } from '../consts';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a href="/" class="brand">
+      <span class="badge">H</span>
+      <span class="brand-name">{SITE.name}</span>
+      <span class="brand-tag mono">/ public&nbsp;brain</span>
+    </a>
+    <nav class="nav">
+      {
+        NAV.map((item) => (
+          <a href={item.href} class:list={['nav-link', { active: isActive(item.href) }]}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgba(13, 17, 23, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .bar {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    text-decoration: none;
+  }
+  .badge {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--brand);
+    color: var(--brand-foreground);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 17px;
+    display: grid;
+    place-items: center;
+    flex: none;
+  }
+  .brand-name {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+  .brand-tag {
+    font-size: 11px;
+    color: var(--fg-muted);
+    letter-spacing: 0.02em;
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-link {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--fg-muted);
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .nav-link:hover {
+    color: var(--brand);
+  }
+  .nav-link.active {
+    color: var(--brand);
+  }
+  @media (max-width: 560px) {
+    .brand-tag {
+      display: none;
+    }
+    .nav {
+      gap: 2px;
+    }
+    .nav-link {
+      padding: 8px 7px;
+      font-size: 13px;
+    }
+  }
+</style>
