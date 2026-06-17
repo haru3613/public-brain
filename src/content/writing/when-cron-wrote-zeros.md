@@ -1,6 +1,6 @@
 ---
 title: "cron 把資料寫成 0 之後"
-date: 2026-06-14
+date: 2026-06-09
 category: system
 tags: ["AI", "safety", "cron"]
 summary: "一個排程把我 5500 筆資料默默清成 0，我從那次學到「重算型任務的防呆三道閘」。"

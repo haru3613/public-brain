@@ -1,6 +1,6 @@
 ---
 title: "讓 Claude 當老師教我的 AI 助理"
-date: 2026-06-14
+date: 2026-06-06
 category: system
 tags: ["AI", "training", "haru"]
 summary: "我讓一個強模型現場當老師、教我的助理量化知識，但規定它「要先上網查證才能教」。"

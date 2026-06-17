@@ -1,6 +1,6 @@
 ---
 title: "AI 不能幫自己打分"
-date: 2026-06-14
+date: 2026-06-13
 category: system
 tags: ["AI", "harness", "qa"]
 summary: "我學到最貴的一課：絕對不要讓「寫程式的 AI」幫自己驗收。"

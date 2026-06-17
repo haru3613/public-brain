@@ -1,7 +1,7 @@
 ---
 title: "我寫了一個 AI 專案經理"
-date: 2026-06-14
-category: system
+date: 2026-06-12
+category: project
 tags: ["AI", "autonomy", "mission-control"]
 summary: "我一個人管不了那麼多 side project，所以我寫了一個 AI PM 幫我管。"
 publish: true

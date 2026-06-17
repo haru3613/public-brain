@@ -1,7 +1,7 @@
 ---
 title: "養成系 AI 助理 Haru"
-date: 2026-06-14
-category: system
+date: 2026-06-11
+category: project
 tags: ["AI", "autonomy", "haru"]
 summary: "我在養一個會自己訂目標、會自我反省、但永遠不敢改自己核心規則的 AI 助理。"
 publish: true

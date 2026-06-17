@@ -1,7 +1,7 @@
 ---
 title: "我的整套 AI 開發閉環"
-date: 2026-06-14
-category: system
+date: 2026-06-10
+category: project
 tags: ["AI", "architecture", "workflow"]
 summary: "Obsidian 當腦、Linear 當規格、AI PM 當調度、排程當手 — 一個會自己跑的開發迴圈。"
 publish: true

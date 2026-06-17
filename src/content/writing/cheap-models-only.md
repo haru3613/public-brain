@@ -1,6 +1,6 @@
 ---
 title: "為什麼我的 AI 自動化只跑便宜模型"
-date: 2026-06-14
+date: 2026-06-07
 category: system
 tags: ["AI", "cost", "autonomy"]
 summary: "自動化跑貴模型會破產 — 我怎麼用便宜模型撐起整套自動化，還有「AI 審 AI」的誠實問題。"

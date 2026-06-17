@@ -1,6 +1,6 @@
 ---
 title: "先 research 再動手"
-date: 2026-06-14
+date: 2026-06-08
 category: system
 tags: ["AI", "workflow", "research"]
 summary: "我蓋完整套架構才發現整條路是死的 — 從此我逼自己「動手前先查清楚現在到底能不能做」。"
