@@ -29,6 +29,50 @@ export function isoDate(value) {
   return d.toISOString().slice(0, 10);
 }
 
+// Tags that are internal to Harvey's vault and shouldn't surface on the site.
+const INTERNAL_TAGS = new Set(['創作素材', 'index', 'ai-agent']);
+
+/** Title from an Obsidian filename: drop extension and a leading "NN - " prefix. */
+export function titleFromFilename(name) {
+  return String(name)
+    .replace(/\.mdx?$/, '')
+    .replace(/^\s*\d+\s*[-–—]\s*/, '')
+    .trim();
+}
+
+/** Drop internal tags; keep the rest, de-duplicated. */
+export function cleanTags(tags = []) {
+  return tags.filter((t) => !INTERNAL_TAGS.has(t)).filter((t, i, a) => a.indexOf(t) === i);
+}
+
+/**
+ * Normalize an Obsidian note body for the site: drop the leading H1 (title lives
+ * in frontmatter) and everything from a trailing「📱 社群草稿」block onward, then
+ * trim stray separators/blank lines.
+ */
+export function cleanNoteBody(body) {
+  const lines = String(body).split('\n');
+  const h1 = lines.findIndex((l) => /^#\s+/.test(l));
+  if (h1 !== -1) lines.splice(h1, 1);
+  const cut = lines.findIndex((l) => l.includes('社群草稿'));
+  let kept = cut === -1 ? lines : lines.slice(0, cut);
+  while (kept.length && (kept.at(-1).trim() === '' || kept.at(-1).trim() === '---')) kept.pop();
+  while (kept.length && kept[0].trim() === '') kept.shift();
+  return kept.join('\n');
+}
+
+/** First real prose paragraph, for use as an auto-summary fallback. */
+export function firstParagraph(body, max = 100) {
+  for (const block of String(body).split(/\n\s*\n/)) {
+    const t = block.trim();
+    if (!t || /^#{1,6}\s/.test(t) || /^[>|\-*]/.test(t) || t.startsWith('```')) continue;
+    const clean = t.replace(/\s+/g, ' ').replace(/[*_`#>]/g, '').trim();
+    if (!clean) continue;
+    return clean.length > max ? `${clean.slice(0, max)}…` : clean;
+  }
+  return '';
+}
+
 /** Minimal YAML-frontmatter parser for the flat post schema. */
 export function parseFrontmatter(raw) {
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);

@@ -73,16 +73,29 @@ mistyped field fails the build rather than shipping silently.
 
 ## Obsidian → site
 
-Write in Obsidian, mark a note `publish: true`, then run the sync:
+Write in Obsidian as usual. To publish a note, add **three things** to its frontmatter:
 
-```bash
-npm run sync          # dry-run: lists publishable notes + warnings (default)
-npm run sync:apply    # copies them into src/content/writing/
+```yaml
+publish: true
+category: system        # system | markets | project | treehole | life
+summary: "一句話摘要"     # optional — auto-derived from the 1st paragraph if absent
 ```
 
-Config via env (`OBSIDIAN_VAULT`, `OBSIDIAN_SUBDIR`). The script never deletes site
-content and never copies a note that isn't `publish: true`. Obsidian-only syntax
-(`[[wikilinks]]`, `![[embeds]]`) is flagged, not silently dropped.
+Then run the sync:
+
+```bash
+npm run sync          # dry-run: lists publishable notes, derived fields + warnings
+npm run sync:apply    # transforms + writes them into src/content/writing/
+```
+
+The sync maps the rest from your existing note convention automatically: `created` →
+`date`, filename → `title` (a leading `NN - ` is dropped), internal tags
+(`創作素材`/`index`/`ai-agent`) removed, the leading H1 and any trailing「📱 社群草稿」
+block stripped. Add an optional `slug:` for clean URLs (otherwise the title is
+slugified). It only ever touches `publish: true` notes; `[[wikilinks]]` / `![[embeds]]`
+are flagged, not silently dropped. `scripts/import-aiagent.mjs` is a worked example
+(a whole series with hand-picked slugs/summaries). Config via `OBSIDIAN_VAULT` /
+`OBSIDIAN_SUBDIR`.
 
 ## Publish via an AI agent (MCP)
 

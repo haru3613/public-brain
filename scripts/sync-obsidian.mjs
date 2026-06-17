@@ -2,27 +2,45 @@
 /**
  * Obsidian → site publishing flow.
  *
- * Scans an Obsidian vault for notes whose frontmatter has `publish: true`,
- * validates the required fields, and copies them into src/content/writing/.
- * The site only ever builds `publish: true` notes — this is the one-way gate.
+ * Scans an Obsidian vault for notes marked `publish: true`, transforms each from
+ * Harvey's note convention into the site schema, and writes them into
+ * src/content/writing/. `publish: true` is the one-way gate.
  *
  *   node scripts/sync-obsidian.mjs            # dry-run (default) — shows what would change
  *   node scripts/sync-obsidian.mjs --apply    # actually write into src/content/writing
  *
- * Config via env:
- *   OBSIDIAN_VAULT   path to the vault root
- *                    (default: ~/Library/Mobile Documents/iCloud~md~obsidian/Documents)
- *   OBSIDIAN_SUBDIR  only scan this subfolder of the vault (optional, e.g. "Writing")
+ * To publish a note, add just three things to its frontmatter:
+ *   publish: true
+ *   category: system|markets|project|treehole|life
+ *   summary: "一句話摘要"        # optional — auto-derived from the 1st paragraph if absent
  *
- * Required frontmatter: title, date, category, summary, publish
- * Optional: tags (array), featured (bool), slug (string — overrides filename)
+ * Everything else is mapped automatically:
+ *   - title:  frontmatter `title`, else the filename (minus a leading "NN - ")
+ *   - date:   frontmatter `date`, else `created`
+ *   - tags:   frontmatter `tags`, minus internal ones (創作素材/index/ai-agent)
+ *   - body:   minus the leading H1 and any trailing「📱 社群草稿」block
+ *   - slug:   frontmatter `slug` (recommended for clean URLs), else slugified title
+ *   Optional passthrough: featured (bool), readTime (string).
+ *
+ * Config via env:
+ *   OBSIDIAN_VAULT   vault root (default: ~/Library/Mobile Documents/iCloud~md~obsidian/Documents)
+ *   OBSIDIAN_SUBDIR  only scan this subfolder (optional, e.g. "AI Agent 心法")
  */
 
 import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join, relative, basename, extname } from 'node:path';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { CATEGORIES, slugify, parseFrontmatter } from './lib/posts-io.mjs';
+import {
+  CATEGORIES,
+  slugify,
+  parseFrontmatter,
+  buildMarkdown,
+  cleanNoteBody,
+  titleFromFilename,
+  firstParagraph,
+  cleanTags,
+} from './lib/posts-io.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DEST = join(ROOT, 'src', 'content', 'writing');
@@ -63,17 +81,47 @@ async function walk(dir) {
   return files;
 }
 
-// parseFrontmatter + slugify are shared with the MCP server via scripts/lib/posts-io.mjs.
-
-function validate(data) {
+// Transform a vault note (Harvey's convention) into site-schema fields.
+// Returns { fields, slug, errors, warnings } — fields is omitted if errors exist.
+function buildPost(data, body, file) {
   const errors = [];
-  for (const field of ['title', 'date', 'category', 'summary']) {
-    if (data[field] === undefined || data[field] === '') errors.push(`missing "${field}"`);
+  const warnings = [];
+
+  const title = (data.title && String(data.title).trim()) || titleFromFilename(basename(file));
+  const date = data.date || data.created;
+  const category = data.category;
+  let summary = data.summary && String(data.summary).trim();
+  if (!summary) {
+    summary = firstParagraph(body);
+    if (summary) warnings.push('summary auto-derived from 1st paragraph — add `summary:` for control');
   }
-  if (data.category && !CATEGORIES.includes(data.category)) {
-    errors.push(`category "${data.category}" not in ${CATEGORIES.join('/')}`);
-  }
-  return errors;
+
+  if (!title) errors.push('no title (none derivable from filename)');
+  if (!date) errors.push('no `date` or `created`');
+  if (!category) errors.push(`missing \`category\` (one of ${CATEGORIES.join('/')})`);
+  else if (!CATEGORIES.includes(category)) errors.push(`category "${category}" not in ${CATEGORIES.join('/')}`);
+  if (!summary) errors.push('no `summary` and no paragraph to derive one from');
+
+  const slug = slugify(data.slug || title || basename(file, extname(file)));
+  if (!slug) errors.push('could not derive a slug');
+
+  if (/!\[\[.+?\]\]/.test(body)) warnings.push('embeds ![[...]] not resolved on the site');
+  if (/(^|[^!])\[\[.+?\]\]/.test(body)) warnings.push('wikilinks [[...]] not resolved');
+
+  if (errors.length) return { errors, warnings, slug };
+
+  const fields = {
+    title,
+    date,
+    category,
+    tags: cleanTags(data.tags),
+    summary,
+    publish: true,
+    featured: data.featured === true,
+    readTime: data.readTime,
+    body: cleanNoteBody(body),
+  };
+  return { fields, slug, errors, warnings };
 }
 
 async function main() {
@@ -102,7 +150,7 @@ async function main() {
       continue;
     }
 
-    const errors = validate(data);
+    const { fields, slug, errors, warnings } = buildPost(data, body, file);
     const rel = relative(VAULT, file);
     if (errors.length) {
       failed++;
@@ -110,19 +158,13 @@ async function main() {
       continue;
     }
 
-    const slug = data.slug ? slugify(data.slug) : slugify(basename(file, '.md'));
-    const dest = join(DEST, `${slug}.md`);
-
-    // Surface Obsidian-only syntax the site can't resolve, so it's a conscious choice.
-    const warnings = [];
-    if (/!\[\[.+?\]\]/.test(body)) warnings.push('embeds ![[...]] (not resolved on the site)');
-    if (/(^|[^!])\[\[.+?\]\]/.test(body)) warnings.push('wikilinks [[...]] (not resolved)');
-
     published++;
-    console.log(`${c.green('✓')} ${rel} ${c.dim('→')} ${c.bold(`writing/${slug}.md`)}`);
-    if (warnings.length) console.log(`  ${c.yellow('! ' + warnings.join('; '))}`);
+    console.log(
+      `${c.green('✓')} ${rel} ${c.dim('→')} ${c.bold(`writing/${slug}.md`)} ${c.dim(`[${fields.category}]`)}`
+    );
+    if (warnings.length) console.log(`  ${c.yellow(`! ${warnings.join('; ')}`)}`);
 
-    if (APPLY) await writeFile(dest, raw, 'utf8');
+    if (APPLY) await writeFile(join(DEST, `${slug}.md`), buildMarkdown(fields), 'utf8');
   }
 
   console.log(

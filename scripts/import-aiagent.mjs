@@ -15,7 +15,7 @@
 import { readFile, readdir, writeFile, unlink, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { parseFrontmatter, buildMarkdown, WRITING_DIR } from './lib/posts-io.mjs';
+import { parseFrontmatter, buildMarkdown, cleanNoteBody, cleanTags, WRITING_DIR } from './lib/posts-io.mjs';
 
 const APPLY = process.argv.includes('--apply');
 const SRC =
@@ -54,24 +54,8 @@ const MAP = [
     summary: '我讓一個強模型現場當老師、教我的助理量化知識，但規定它「要先上網查證才能教」。' },
 ];
 
-const INTERNAL_TAGS = new Set(['創作素材', 'index', 'ai-agent']);
-
-/** Drop the H1 line and everything from「社群草稿」on; tidy edges. */
-function cleanBody(body) {
-  const lines = body.split('\n');
-  const h1 = lines.findIndex((l) => /^#\s+/.test(l));
-  if (h1 !== -1) lines.splice(h1, 1);
-  const cut = lines.findIndex((l) => l.includes('社群草稿'));
-  let kept = cut === -1 ? lines : lines.slice(0, cut);
-  while (kept.length && (kept.at(-1).trim() === '' || kept.at(-1).trim() === '---')) kept.pop();
-  while (kept.length && kept[0].trim() === '') kept.shift();
-  return kept.join('\n');
-}
-
-function tagsFrom(data) {
-  const kept = (data.tags || []).filter((t) => !INTERNAL_TAGS.has(t));
-  return ['AI', ...kept].filter((t, i, a) => a.indexOf(t) === i).slice(0, 3);
-}
+// Series-specific: prepend "AI" and cap at 3 tags.
+const tagsFrom = (data) => ['AI', ...cleanTags(data.tags)].filter((t, i, a) => a.indexOf(t) === i).slice(0, 3);
 
 async function main() {
   console.log(`\nImport「AI Agent 心法」→ site  (${APPLY ? 'APPLY' : 'dry-run'})`);
@@ -89,7 +73,7 @@ async function main() {
       summary: m.summary,
       publish: true,
       featured: m.featured,
-      body: cleanBody(body),
+      body: cleanNoteBody(body),
     });
     built.push({ slug: m.slug, md });
     console.log(`  ✓ ${m.n} → ${m.slug}.md  [${m.category}]  ${m.title}`);
