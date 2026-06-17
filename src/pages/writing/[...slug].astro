@@ -3,6 +3,7 @@ import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { SITE } from '../../consts';
 import { getPosts, toView } from '../../lib/posts';
+import { withBase } from '../../lib/url';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -16,7 +17,7 @@ const { Content } = await render(post);
 
 <Base title={post.data.title} description={post.data.summary}>
   <article class="article">
-    <a href="/writing" class="back mono">← Writing</a>
+    <a href={withBase('/writing')} class="back mono">← Writing</a>
 
     <header class="head">
       <span class="cat" style={`color:${view.catColor};`}>{view.catLabel}</span>
@@ -33,7 +34,7 @@ const { Content } = await render(post);
     </div>
 
     <footer class="foot">
-      <a href="/writing" class="btn btn-ghost back-btn">← 回到 Writing</a>
+      <a href={withBase('/writing')} class="btn btn-ghost back-btn">← 回到 Writing</a>
       <span class="sig mono">{SITE.name} · public brain</span>
     </footer>
   </article>

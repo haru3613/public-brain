@@ -1,6 +1,7 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import { SITE } from '../consts';
+import { withBase } from '../lib/url';
 
 export async function GET(context) {
   // RSS only ever carries published posts — never drafts, regardless of env.
@@ -17,7 +18,7 @@ export async function GET(context) {
       description: post.data.summary,
       pubDate: post.data.date,
       categories: post.data.tags,
-      link: `/writing/${post.id}/`,
+      link: withBase(`/writing/${post.id}/`),
     })),
     customData: `<language>zh-Hant</language>`,
   });

@@ -1,5 +1,6 @@
 ---
 import { SITE, LINKS } from '../consts';
+import { withBase } from '../lib/url';
 const year = new Date().getUTCFullYear();
 ---
 
@@ -17,16 +18,16 @@ const year = new Date().getUTCFullYear();
           <div class="links">
             <a href={LINKS.youtube} target="_blank" rel="noopener" class="ext">YouTube</a>
             <a href={LINKS.github} target="_blank" rel="noopener" class="ext">GitHub</a>
-            <a href={LINKS.rss} class="rss mono">RSS</a>
+            <a href={withBase(LINKS.rss)} class="rss mono">RSS</a>
           </div>
         </div>
         <div>
           <span class="eyebrow">Site</span>
           <div class="links">
-            <a href="/" class="ext">Now</a>
-            <a href="/writing" class="ext">Writing</a>
-            <a href="/projects" class="ext">Projects</a>
-            <a href="/about" class="ext">About</a>
+            <a href={withBase('/')} class="ext">Now</a>
+            <a href={withBase('/writing')} class="ext">Writing</a>
+            <a href={withBase('/projects')} class="ext">Projects</a>
+            <a href={withBase('/about')} class="ext">About</a>
           </div>
         </div>
       </div>

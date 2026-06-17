@@ -1,6 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { catMeta, MARKETS_CATEGORIES, type Category } from './categories';
 import { readingTime, monoDate } from './readingTime';
+import { withBase } from './url';
 
 export type Post = CollectionEntry<'writing'>;
 
@@ -48,7 +49,7 @@ export function toView(post: Post): PostView {
   const meta = catMeta(post.data.category);
   return {
     slug: post.id,
-    href: `/writing/${post.id}`,
+    href: withBase(`/writing/${post.id}`),
     title: post.data.title,
     summary: post.data.summary,
     tags: post.data.tags,

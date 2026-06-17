@@ -2,13 +2,18 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
-// Update this once a domain is chosen — it is used for RSS, sitemap, and
-// canonical/OG absolute URLs. Override locally with the SITE_URL env var.
-const SITE = process.env.SITE_URL ?? 'https://publicbrain.example';
+// Deploy target config — overridable by env so the same build works on GitHub
+// Pages (subpath), Vercel (root), or a custom domain (root).
+//   SITE_URL   origin used for RSS, sitemap, canonical/OG absolute URLs
+//   BASE_PATH  base path the site is served under ("/" for root, "/public-brain"
+//              for a GitHub Pages project site). Set BASE_PATH=/ on Vercel.
+const SITE = process.env.SITE_URL ?? 'https://haru3613.github.io';
+const BASE = process.env.BASE_PATH ?? '/public-brain';
 
 // https://astro.build
 export default defineConfig({
   site: SITE,
+  base: BASE,
   output: 'static',
   integrations: [mdx(), sitemap()],
   markdown: {

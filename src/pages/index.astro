@@ -6,6 +6,7 @@ import ProjectCard from '../components/ProjectCard.astro';
 import { SITE } from '../consts';
 import { PROJECTS } from '../data/projects';
 import { getPosts, getMarketsPosts, toView } from '../lib/posts';
+import { withBase } from '../lib/url';
 
 const posts = (await getPosts()).map(toView);
 const latest = posts.slice(0, 4);
@@ -26,8 +27,8 @@ const marketsNotes = (await getMarketsPosts()).map(toView).slice(0, 4);
           >
         </p>
         <div class="cta">
-          <a href="/writing" class="btn btn-primary">讀 Writing →</a>
-          <a href="/projects" class="btn btn-ghost">看 Projects</a>
+          <a href={withBase('/writing')} class="btn btn-primary">讀 Writing →</a>
+          <a href={withBase('/projects')} class="btn btn-ghost">看 Projects</a>
         </div>
       </div>
       <Now />
@@ -40,7 +41,7 @@ const marketsNotes = (await getMarketsPosts()).map(toView).slice(0, 4);
           <span class="eyebrow">Writing</span>
           <h2 class="section-head h2">最新文章</h2>
         </div>
-        <a href="/writing" class="more mono">查看全部 →</a>
+        <a href={withBase('/writing')} class="more mono">查看全部 →</a>
       </div>
       <div>
         {latest.map((post) => <PostRow post={post} />)}

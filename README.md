@@ -125,12 +125,27 @@ can't accidentally ship code or deploy from a remoteless repo. The schema is sha
 with the Obsidian sync via `scripts/lib/posts-io.mjs`, with `src/content.config.ts`
 (Zod) as the build-time backstop.
 
-## Deploy (Vercel)
+## Deploy
 
-Static output — Vercel auto-detects Astro (build `astro build`, output `dist/`). Set the
-production env var:
+The site is **deploy-target agnostic** via two env vars (read in `astro.config.mjs`):
 
-- `SITE_URL` — the canonical site origin (used for RSS, sitemap, canonical/OG URLs).
+- `SITE_URL` — canonical origin (RSS, sitemap, canonical/OG). Default `https://haru3613.github.io`.
+- `BASE_PATH` — sub-path the site is served under. Default `/public-brain` (a GitHub Pages
+  **project** site). Set `BASE_PATH=/` for a root deploy (Vercel, custom domain, or a
+  `<user>.github.io` user site).
+
+All internal links go through `withBase()` (`src/lib/url.ts`), so they stay correct at any base.
+
+### GitHub Pages (current)
+
+`.github/workflows/deploy.yml` builds with `withastro/action` and publishes to Pages on every
+push to `main`. Enable once: repo **Settings → Pages → Source: GitHub Actions**
+(or `gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow`). Live at
+`https://haru3613.github.io/public-brain/`.
+
+### Vercel (alternative)
+
+Static — Vercel auto-detects Astro. Set `BASE_PATH=/` (and optionally `SITE_URL`) so links resolve at root.
 
 ## TODO (from the brief)
 
@@ -140,6 +155,6 @@ production env var:
 - [x] Addy-Osmani-style home (Home A — terminal index)
 - [x] RSS (`/rss.xml`)
 - [x] AI-agent publishing path (MCP server in `mcp/`)
-- [ ] choose a domain → set `SITE_URL`, swap YouTube/GitHub hrefs in `src/consts.ts`
-- [ ] deploy to Vercel
+- [x] deploy (GitHub Pages via Actions)
+- [ ] choose a custom domain → set `SITE_URL` + `BASE_PATH=/`, swap YouTube/GitHub hrefs in `src/consts.ts`
 - [ ] Newsletter — later

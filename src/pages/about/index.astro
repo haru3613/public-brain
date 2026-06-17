@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { SITE, LINKS } from '../../consts';
+import { withBase } from '../../lib/url';
 ---
 
 <Base title="About" description="很短的自介與連結。網站是家，社群只是路邊看板。">
@@ -29,7 +30,7 @@ import { SITE, LINKS } from '../../consts';
       <div class="link-list">
         <a href={LINKS.youtube} target="_blank" rel="noopener">YouTube<span class="arrow">→</span></a>
         <a href={LINKS.github} target="_blank" rel="noopener">GitHub<span class="arrow">→</span></a>
-        <a href={LINKS.rss}>RSS<span class="arrow">→</span></a>
+        <a href={withBase(LINKS.rss)}>RSS<span class="arrow">→</span></a>
       </div>
     </section>
   </div>
