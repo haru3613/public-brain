@@ -27,6 +27,6 @@ export const NAV: { label: string; href: string }[] = [
 // External + feed links. Swap the hrefs once finalized.
 export const LINKS = {
   youtube: 'https://youtube.com',
-  github: 'https://github.com',
+  github: 'https://github.com/haru3613',
   rss: '/rss.xml',
 } as const;
