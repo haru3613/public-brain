@@ -77,6 +77,13 @@ const isActive = (href: string) =>
     display: flex;
     align-items: center;
     gap: 6px;
+    /* never clip nav items — scroll if a very narrow viewport can't fit them */
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav::-webkit-scrollbar {
+    display: none;
   }
   .nav-link {
     font-family: var(--font-body);
@@ -85,6 +92,7 @@ const isActive = (href: string) =>
     padding: 8px 10px;
     border-radius: 8px;
     text-decoration: none;
+    white-space: nowrap;
     transition: color 0.2s ease;
   }
   .nav-link:hover {
@@ -93,16 +101,36 @@ const isActive = (href: string) =>
   .nav-link.active {
     color: var(--brand);
   }
-  @media (max-width: 560px) {
+  @media (max-width: 600px) {
     .brand-tag {
       display: none;
     }
+    .bar {
+      gap: 12px;
+    }
     .nav {
-      gap: 2px;
+      gap: 1px;
     }
     .nav-link {
       padding: 8px 7px;
       font-size: 13px;
+    }
+  }
+  /* below ~440px the wordmark + 5 nav items won't both fit — drop the wordmark,
+     keep the H badge as the home affordance */
+  @media (max-width: 440px) {
+    .site-header .wrap {
+      padding: 0 14px;
+    }
+    .brand-name {
+      display: none;
+    }
+    .bar {
+      gap: 8px;
+    }
+    .nav-link {
+      padding: 7px 5px;
+      font-size: 12.5px;
     }
   }
 </style>

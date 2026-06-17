@@ -29,7 +29,12 @@ src/
     projects/            # Projects
     about/               # About / Links
     rss.xml.js           # RSS feed (published posts only)
-scripts/sync-obsidian.mjs  # Obsidian → site publishing flow
+scripts/
+  sync-obsidian.mjs      # Obsidian → site publishing flow
+  lib/posts-io.mjs       # shared post read/write/validate (sync + MCP)
+mcp/
+  server.mjs             # MCP server — lets an AI agent author & publish posts
+  test-smoke.mjs         # end-to-end MCP self-test
 ```
 
 ## Develop
@@ -79,6 +84,47 @@ Config via env (`OBSIDIAN_VAULT`, `OBSIDIAN_SUBDIR`). The script never deletes s
 content and never copies a note that isn't `publish: true`. Obsidian-only syntax
 (`[[wikilinks]]`, `![[embeds]]`) is flagged, not silently dropped.
 
+## Publish via an AI agent (MCP)
+
+A second authoring path — alongside Obsidian — lets an AI agent write and publish
+posts over [MCP](https://modelcontextprotocol.io). The server lives in `mcp/` and
+operates on the same content dir + schema the site builds from.
+
+```bash
+cd mcp && npm install          # one-time
+npm run start                  # run the server (stdio)
+node test-smoke.mjs            # end-to-end self-test (creates + deletes a temp post)
+```
+
+Register it with an MCP client. The repo ships a project-scoped `.mcp.json` that
+Claude Code auto-discovers; for other clients:
+
+```json
+{
+  "mcpServers": {
+    "public-brain": { "command": "node", "args": ["<repo>/mcp/server.mjs"] }
+  }
+}
+```
+
+Tools exposed to the agent:
+
+| Tool | Purpose |
+|------|---------|
+| `list_posts` | List posts (filter by publish status / category) |
+| `read_post` | Read a post's frontmatter + body |
+| `create_post` | Create a post (draft by default; enforces the schema) |
+| `update_post` | Patch fields / body of an existing post |
+| `set_publish` | Flip a post between published and draft |
+| `delete_post` | Remove a post |
+| `publish_and_deploy` | Commit `src/content/writing` and push → triggers the Vercel deploy |
+
+`publish_and_deploy` stages **only** `src/content/writing` (never unrelated code) and
+pushes only when the branch has an upstream — so an agent can take a post live, but
+can't accidentally ship code or deploy from a remoteless repo. The schema is shared
+with the Obsidian sync via `scripts/lib/posts-io.mjs`, with `src/content.config.ts`
+(Zod) as the build-time backstop.
+
 ## Deploy (Vercel)
 
 Static output — Vercel auto-detects Astro (build `astro build`, output `dist/`). Set the
@@ -93,6 +139,7 @@ production env var:
 - [x] Obsidian → site publishing workflow (`scripts/sync-obsidian.mjs`)
 - [x] Addy-Osmani-style home (Home A — terminal index)
 - [x] RSS (`/rss.xml`)
+- [x] AI-agent publishing path (MCP server in `mcp/`)
 - [ ] choose a domain → set `SITE_URL`, swap YouTube/GitHub hrefs in `src/consts.ts`
 - [ ] deploy to Vercel
 - [ ] Newsletter — later

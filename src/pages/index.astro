@@ -9,7 +9,7 @@ import { getPosts, getMarketsPosts, toView } from '../lib/posts';
 
 const posts = (await getPosts()).map(toView);
 const latest = posts.slice(0, 4);
-const marketsNotes = (await getMarketsPosts()).map(toView).slice(0, 3);
+const marketsNotes = (await getMarketsPosts()).map(toView).slice(0, 4);
 ---
 
 <Base>

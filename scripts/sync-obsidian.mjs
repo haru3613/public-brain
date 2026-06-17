@@ -22,6 +22,7 @@ import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join, relative, basename, extname } from 'node:path';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { CATEGORIES, slugify, parseFrontmatter } from './lib/posts-io.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DEST = join(ROOT, 'src', 'content', 'writing');
@@ -31,8 +32,6 @@ const VAULT =
   process.env.OBSIDIAN_VAULT ||
   join(homedir(), 'Library', 'Mobile Documents', 'iCloud~md~obsidian', 'Documents');
 const SCAN_ROOT = process.env.OBSIDIAN_SUBDIR ? join(VAULT, process.env.OBSIDIAN_SUBDIR) : VAULT;
-
-const VALID_CATEGORIES = ['system', 'markets', 'project', 'treehole', 'life'];
 
 const c = {
   dim: (s) => `\x1b[2m${s}\x1b[0m`,
@@ -64,45 +63,15 @@ async function walk(dir) {
   return files;
 }
 
-/** Minimal frontmatter parser — handles the flat schema we publish. */
-function parseFrontmatter(raw) {
-  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
-  if (!match) return { data: null, body: raw };
-  const data = {};
-  for (const line of match[1].split(/\r?\n/)) {
-    const m = line.match(/^([A-Za-z0-9_-]+)\s*:\s*(.*)$/);
-    if (!m) continue;
-    const key = m[1];
-    let val = m[2].trim();
-    if (val === 'true' || val === 'false') {
-      data[key] = val === 'true';
-    } else if (val.startsWith('[') && val.endsWith(']')) {
-      data[key] = val
-        .slice(1, -1)
-        .split(',')
-        .map((s) => s.trim().replace(/^["']|["']$/g, ''))
-        .filter(Boolean);
-    } else {
-      data[key] = val.replace(/^["']|["']$/g, '');
-    }
-  }
-  return { data, body: raw.slice(match[0].length) };
-}
-
-function slugify(name) {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9一-鿿]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
+// parseFrontmatter + slugify are shared with the MCP server via scripts/lib/posts-io.mjs.
 
 function validate(data) {
   const errors = [];
   for (const field of ['title', 'date', 'category', 'summary']) {
     if (data[field] === undefined || data[field] === '') errors.push(`missing "${field}"`);
   }
-  if (data.category && !VALID_CATEGORIES.includes(data.category)) {
-    errors.push(`category "${data.category}" not in ${VALID_CATEGORIES.join('/')}`);
+  if (data.category && !CATEGORIES.includes(data.category)) {
+    errors.push(`category "${data.category}" not in ${CATEGORIES.join('/')}`);
   }
   return errors;
 }
